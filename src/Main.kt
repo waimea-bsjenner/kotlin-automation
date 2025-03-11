@@ -207,25 +207,37 @@ fun placeMonkey(cageList: MutableList<String>, name: String): Int {
  * - If all cages are occupied, returns -1
  */
 fun placeViolentMonkey(cageList: MutableList<String>, name: String): Int {
-    println("+++ Putting $name (VIOLENT!) into a cage")
-    for ((i, cage) in cageList.withIndex()) {
-        if (i == 0) {
-            if (cageList[i] == EMPTY) {
-                if (cageList[i + 1] == EMPTY) {
-                    cageList[i] = name
-                    return i + 1
-                }
-                else continue
-            }
-            else continue
-        }
-        else if (i.lastIndexOf(cageList)) {
+    println("+++ Putting !$name (VIOLENT!) into a cage")
 
-        }
+    for (i in cageList.indices) {
+        if (cageList[i] != EMPTY) continue
+        if (cageList.getOrElse(i - 1) {EMPTY} != EMPTY) continue
+        if (cageList.getOrElse(i + 1) {EMPTY} != EMPTY) continue
+        placeMonkeyInCage(cageList, i+1, "!${name}")
+        return i + 1
     }
     return -1
 }
 
+//fun placeViolentMonkey(cageList: MutableList<String>, name: String): Int {
+//    println("+++ Putting !$name (VIOLENT!) into a cage")
+//    //Iterate over list and check each cage for criteria
+//
+//    for(index in cageList.indices) {
+//        if(cageList[index]!=EMPTY) continue
+//
+//        //Ensure that neighboring cages are empty or not present
+//        if(cageList.getOrElse(index-1){EMPTY}!=EMPTY) continue
+//        if(cageList.getOrElse(index+1){EMPTY}!=EMPTY) continue
+//
+//        placeMonkeyInCage(cageList,index+1,"!$name")
+//        println("+++ Automatically placed !$name (VIOLENT) in cage ${index+1}")
+//        return index + 1
+//    }
+//
+//    println("+++ No room to place monkey")
+//    return -1
+//}
 
 /**
  * ========================================================
@@ -257,9 +269,16 @@ fun placeMonkeyInCage(cageList: MutableList<String>, cageNum: Int, name: String)
     if (cageNum !in 1..NUMCAGES) return
     // Check for blank name
     if (name.isBlank()) return
-    // Ok to go ahead and place the monkey
-    println("+++ Putting $name into cage $cageNum")
-    cageList[cageNum - 1] = name
+    // Check if adjacent is violent monkey
+    for (i in cageList.indices) {
+        if (cageList[i] != EMPTY) continue
+        if (cageList.getOrElse(i + 1){""}.contains("!")) continue
+        if (cageList.getOrElse(i - 1){""}.contains("!")) continue
+        // Ok to go ahead and place the monkey
+        println("+++ Putting $name into cage $cageNum")
+        cageList[cageNum - 1] = name
+    }
+
 }
 
 
