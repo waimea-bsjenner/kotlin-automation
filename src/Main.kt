@@ -182,10 +182,14 @@ fun main() {
 fun placeMonkey(cageList: MutableList<String>, name: String): Int {
     println("+++ Putting $name into a cage")
     for ((i, cage) in cageList.withIndex()) {
+        // Check if adjacent is violent monkey
+        if (cageList[i] != EMPTY) continue
+        if (cageList.getOrElse(i + 1){""}.contains("!")) continue
+        if (cageList.getOrElse(i - 1){""}.contains("!")) continue
         if (cageList[i] == EMPTY) {
             cageList[i] = name
-            return (i+1)
-        }
+                return (i + 1)
+            }
         else {
             continue
         }
@@ -269,16 +273,9 @@ fun placeMonkeyInCage(cageList: MutableList<String>, cageNum: Int, name: String)
     if (cageNum !in 1..NUMCAGES) return
     // Check for blank name
     if (name.isBlank()) return
-    // Check if adjacent is violent monkey
-    for (i in cageList.indices) {
-        if (cageList[i] != EMPTY) continue
-        if (cageList.getOrElse(i + 1){""}.contains("!")) continue
-        if (cageList.getOrElse(i - 1){""}.contains("!")) continue
-        // Ok to go ahead and place the monkey
-        println("+++ Putting $name into cage $cageNum")
-        cageList[cageNum - 1] = name
-    }
-
+    // Ok to go ahead and place the monkey
+    println("+++ Putting $name into cage $cageNum")
+    cageList[cageNum - 1] = name
 }
 
 
@@ -295,11 +292,17 @@ fun showMonkeyCages(cageList: List<String>) {
     val divider = "+--------".repeat(cageList.size) + "+"
 
     println(divider)
-    for (i in 0..<cageList.size) print("| Cage ${i + 1} ")
+    for (i in 0..<cageList.size) print("| " + ("Cage ${i + 1} ".blue()))
     println("|")
 
     println(divider)
-    for ((i, name) in cageList.withIndex()) print("| ${name.padEnd(6)} ")
+    for ((i, name) in cageList.withIndex()) {
+        when {
+            (name != EMPTY && name.first() != '!') -> print("| " + (name.padEnd(7).green()) )
+            (name.contains('!')) ->  print("| " + (name.padEnd(7).red()) )
+            (name == EMPTY) -> print("| " + (name.padEnd(7).grey()) )
+        }
+    }
     println("|")
 
     println(divider)
